@@ -6,10 +6,12 @@
 ;; ## Artifact Keys/Partitions
 
 (defn- artifact-keys
-  [{:keys [id version]} [_ _ & {:keys [upgrade upgrade?] :or {upgrade []}}]]
+  [{:keys [group id version]} [_ _ & {:keys [upgrade upgrade?] :or {upgrade []}}]]
   (if (or (false? upgrade) (false? upgrade?))
     [::never]
     (cond-> #{}
+      true                         (conj (keyword (str group "/" id)))
+      true                         (conj (keyword group))
       (#{"clojure"} id)            (conj :clojure)
       (#{"clojurescript"} id)      (conj :clojure)
       (version/qualified? version) (conj :qualified)
